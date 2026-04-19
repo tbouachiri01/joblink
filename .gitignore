@@ -1,0 +1,17 @@
+# Python / Django
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.sqlite3
+*.log
+
+# Angular
+node_modules/
+dist/
+.angular/
+
+# OS
+.DS_Store
+Thumbs.db
