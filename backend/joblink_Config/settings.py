@@ -20,9 +20,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ⚠️ IMPORTANT : Charger le .env ICI, AVANT tout le reste
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-...'
-
 # ... autres configs ...
 
 # Quick-start development settings - unsuitable for production
@@ -47,9 +44,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'joblinkApp',
+    'corsheaders',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,6 +64,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# Autorise Angular
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+    "http://localhost:51761",
 ]
 
 ROOT_URLCONF = 'joblink_Config.urls'
@@ -81,15 +94,16 @@ WSGI_APPLICATION = 'joblink_Config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+AUTH_USER_MODEL = 'joblinkApp.User'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),        # ✅ CORRECT
-        'USER': os.getenv('DB_USER'),        # ✅ CORRECT
-        'PASSWORD': os.getenv('DB_PASSWORD'), # ✅ CORRECT
-        'HOST': os.getenv('DB_HOST'),        # ✅ CORRECT
-        'PORT': os.getenv('DB_PORT'),        # ✅ CORRECT
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -128,3 +142,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

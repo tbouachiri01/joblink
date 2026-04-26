@@ -15,8 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
+from django.urls import path,include
+from joblinkApp.views import api_root
 urlpatterns = [
+    path('', api_root, name='api-root'), 
+    
     path('admin/', admin.site.urls),
+    
+    # 3. Vérifie bien que ton inclusion d'API est comme ceci
+    path('api/auth/', include('joblinkApp.urls')),
 ]
