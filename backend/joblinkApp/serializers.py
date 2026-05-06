@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, ProfilCandidat
+from .models import User, ProfilCandidat, Candidature
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -46,3 +46,9 @@ class ProfilCandidatSerializer(serializers.ModelSerializer):
             if ext not in ['pdf', 'doc', 'docx']:
                 raise serializers.ValidationError("PDF ou Word uniquement.")
         return value
+
+class CandidatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Candidature
+        fields = ['id', 'offre_titre', 'entreprise', 'statut', 'date_candidature']
+        read_only_fields = ['date_candidature']

@@ -22,3 +22,19 @@ class ProfilCandidat(models.Model):
 
     def __str__(self):
         return f"Profil de {self.user.email}"
+
+class Candidature(models.Model):
+    STATUTS = [
+        ('en_attente', 'En attente'),
+        ('vue', 'Vue'),
+        ('acceptee', 'Acceptée'),
+        ('refusee', 'Refusée'),
+    ]
+    candidat = models.ForeignKey(User, on_delete=models.CASCADE, related_name='candidatures')
+    offre_titre = models.CharField(max_length=200)
+    entreprise = models.CharField(max_length=200)
+    statut = models.CharField(max_length=20, choices=STATUTS, default='en_attente')
+    date_candidature = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.candidat.email} - {self.offre_titre} ({self.statut})"

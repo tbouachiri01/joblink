@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import User
+from .models import User, ProfilCandidat, Candidature
 from rest_framework import generics
-from .serializers import RegisterSerializer, MyTokenObtainPairSerializer, ProfilCandidatSerializer
+from .serializers import RegisterSerializer, MyTokenObtainPairSerializer, ProfilCandidatSerializer, CandidatureSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .models import ProfilCandidat
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -23,6 +22,7 @@ def api_root(request):
             'login': 'http://127.0.0.1:8000/api/auth/login/',
             'token_refresh': 'http://127.0.0.1:8000/api/auth/token/refresh/',
             'profil': 'http://127.0.0.1:8000/api/profil/',
+            'candidatures': 'http://127.0.0.1:8000/api/candidatures/',
         }
     })
 
@@ -63,4 +63,26 @@ class ProfilCandidatView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DashboardCandidaturesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        candidatures = Candidature.objects.filter(candidat=request.user)
+        serializer = CandidatureSerializer(candidatures, many=True)
+        return Response({
+            'total': candidatures.count(),
+            'en_attente': candidatures.filter(statut='en_attente').count(),
+            'vues': candidatures.filter(statut='vue').count(),
+            'acceptees': candidatures.filter(statut='acceptee').count(),
+            'refusees': candidatures.filter(statut='refusee').count(),
+            'candidatures': serializer.data
+        })
+
+    def post(self, request):
+        serializer = CandidatureSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(candidat=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

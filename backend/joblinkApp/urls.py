@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import RegisterView, api_root, ProfilCandidatView
+from .views import RegisterView, api_root, ProfilCandidatView, DashboardCandidaturesView
 
 urlpatterns = [
     path('', api_root, name='api-root'),
     path('auth/register/', RegisterView.as_view(), name='register'),
     path('profil/', ProfilCandidatView.as_view(), name='profil-candidat'),
+    path('candidatures/', DashboardCandidaturesView.as_view(), name='dashboard-candidatures'),
 ]
